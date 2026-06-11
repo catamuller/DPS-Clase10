@@ -1,0 +1,5 @@
+edu\itba\class10\api\controller\ExchangeControllerTest.class
+edu\itba\class10\CurrencyConverterTest.class
+edu\itba\class10\CurrencyConverterIT.class
+edu\itba\class10\IntegrationTest.class
+edu\itba\class10\GetHistoricalRatesTest.class

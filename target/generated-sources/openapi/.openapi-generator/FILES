@@ -1,0 +1,15 @@
+.openapi-generator-ignore
+README.md
+pom.xml
+src/main/java/edu/itba/class10/ApiUtil.java
+src/main/java/edu/itba/class10/ExchangeApi.java
+src/main/java/edu/itba/class10/converter/api/domain/BulkConversionResponse.java
+src/main/java/edu/itba/class10/converter/api/domain/Conversion.java
+src/main/java/edu/itba/class10/converter/api/domain/ConvertedAmount.java
+src/main/java/edu/itba/class10/converter/api/domain/Currency.java
+src/main/java/edu/itba/class10/converter/api/domain/ErrorResponse.java
+src/main/java/edu/itba/class10/converter/api/domain/ExchangeRateResponse.java
+src/main/java/edu/itba/class10/converter/api/domain/HistoricalRateResponse.java
+src/main/java/edu/itba/class10/converter/api/domain/MoneyAmount.java
+src/main/java/edu/itba/class10/converter/api/domain/SingleConversionRequest.java
+src/main/java/org/openapitools/configuration/EnumConverterConfiguration.java
