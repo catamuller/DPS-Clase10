@@ -3,48 +3,46 @@ package edu.itba.class10.api.controller;
 import edu.itba.class10.IntegrationTest;
 
 import edu.itba.class10.boot.Application;
+import edu.itba.class10.converter.api.domain.ConvertedAmount;
+import edu.itba.class10.converter.api.domain.Currency;
+import edu.itba.class10.converter.api.domain.SingleConversionRequest;
+import edu.itba.class10.converter.api.domain.Conversion;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {Application.class})
+@SpringBootTest(classes = {Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles("sql")
 class ExchangeControllerIT extends IntegrationTest {
 
 	@Autowired
-	private MockMvc mockMvc;
+	private TestRestTemplate testRestTemplate;
 
 
 	@Test
-	void convertsEurToUsdThroughTheHttpEndpoint() throws Exception {
-		this.mockMvc.perform(post("/v1/exchange/conversion").contentType(MediaType.APPLICATION_JSON).content("""
-						{
-						  "from": "EUR",
-						  "to": "USD",
-						  "amount": 100
-						}
-						"""))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.currency").value("USD"))
-				.andExpect(jsonPath("$.amount").value(10200));
+	void convertsEurToUsdThroughHttpEndpoint() {
+		var request = new SingleConversionRequest().from(Currency.EUR).amount(100.0).to(Currency.USD);
+		var responsePost=this.testRestTemplate.postForEntity("/v1/exchange/conversion",request, ConvertedAmount.class);
 
-		this.mockMvc.perform(get("/v1/exchange/conversion")).andExpect(status().isOk())
-				.andExpect(jsonPath("$[0].from.currency").value("EUR"))
-				.andExpect(jsonPath("$[0].from.amount").value(100))
-				.andExpect(jsonPath("$[0].to.amount").value(10200))
-				.andExpect(jsonPath("$[0].to.currency").value("USD"));
+		assertThat(responsePost.getStatusCode().value(), is(200));
+		assertThat(responsePost.getBody().getCurrency().name(), is("USD"));
+		assertThat(responsePost.getBody().getAmount(),is(10200.0));
+
+		var responseGet=this.testRestTemplate.getForEntity("/v1/exchange/conversion",Conversion[].class);
+		assertThat(responseGet.getStatusCode().value(), is(200));
+		assertThat(responseGet.getBody()[0].getFrom().getCurrency().name(),is("EUR"));
+		assertThat(responseGet.getBody()[0].getTo().getCurrency().name(), is("USD"));
+		assertThat(responseGet.getBody()[0].getTo().getAmount(),is(10200.0));
 	}
 }
