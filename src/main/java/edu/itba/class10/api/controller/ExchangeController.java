@@ -9,6 +9,7 @@ import edu.itba.class10.domain.usecases.exchangerate.CurrencyConversionsHistory;
 import edu.itba.class10.domain.usecases.exchangerate.CurrencyConverter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,7 @@ public class ExchangeController implements ExchangeApi {
 	private final SingleConversionMapper singleConversionMapper = new SingleConversionMapper();
 
 	@Override
-	@RequestMapping("v1/exchange/conversion")
+	@PostMapping("v1/exchange/conversion")
 	public ResponseEntity<ConvertedAmount> convertToSingleCurrency(final SingleConversionRequest request) {
 		final var moneyAmount = this.singleConversionMapper.toMoneyAmount(request);
 		final var requestedCurrency = this.singleConversionMapper.toCurrency(request);
