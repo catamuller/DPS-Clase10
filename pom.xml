@@ -3,19 +3,32 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>dps-itba</groupId>
-        <artifactId>parent-project</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-
+    <groupId>DPS</groupId>
+    <version>1.0-SNAPSHOT</version>
     <artifactId>class-10</artifactId>
     <name>class-10</name>
+
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>25</java.version>
+        <maven.compiler.release>25</maven.compiler.release>
+        <junit.version>5.12.0</junit.version>
+        <log4j.version>2.25.3</log4j.version>
+        <lombok.version>1.18.38</lombok.version>
+        <gson.version>2.11.0</gson.version>
+        <unirest.version>1.4.9</unirest.version>
+        <mockito.version>5.15.2</mockito.version>
+        <hamcrest.version>3.0</hamcrest.version>
+        <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.5.2</maven-surefire-plugin.version>
+        <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+        <wiremock-jetty12.version>3.10.0</wiremock-jetty12.version>
         <spring-boot.version>3.5.14</spring-boot.version>
         <de.flapdoodle.embed.mongo.spring30x.version>4.11.0</de.flapdoodle.embed.mongo.spring30x.version>
         <openapi-generator.version>7.13.0</openapi-generator.version>
+        <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
     </properties>
+
     <packaging>jar</packaging>
 
     <dependencyManagement>
@@ -91,6 +104,7 @@
         <dependency>
             <groupId>com.mashape.unirest</groupId>
             <artifactId>unirest-java</artifactId>
+            <version>${unirest.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.json</groupId>
@@ -101,11 +115,11 @@
         <dependency>
             <artifactId>gson</artifactId>
             <groupId>com.google.code.gson</groupId>
-            <version>${gson.version}</version>
         </dependency>
         <dependency>
             <groupId>org.wiremock</groupId>
             <artifactId>wiremock-jetty12</artifactId>
+            <version>${wiremock-jetty12.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
