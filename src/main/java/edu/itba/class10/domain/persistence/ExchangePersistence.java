@@ -5,5 +5,4 @@ import java.util.List;
 public interface ExchangePersistence {
 	void save(SingleConversionEntity entity);
     List<SingleConversionEntity> findAll();
-    void deleteAll();
 }

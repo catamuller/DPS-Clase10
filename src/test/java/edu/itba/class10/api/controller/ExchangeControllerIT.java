@@ -7,7 +7,6 @@ import edu.itba.class10.converter.api.domain.ConvertedAmount;
 import edu.itba.class10.converter.api.domain.Currency;
 import edu.itba.class10.converter.api.domain.SingleConversionRequest;
 import edu.itba.class10.domain.persistence.ExchangePersistence;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -35,11 +34,6 @@ class ExchangeControllerIT extends IntegrationTest {
 
 	@Autowired
 	private ExchangePersistence exchangePersistence;
-
-	@BeforeEach
-	void clearConversionHistory() {
-		this.exchangePersistence.deleteAll();
-	}
 
 	@Test
 	void getAllConversionsReturnsEmptyListWhenNoConversionWasMade() {
