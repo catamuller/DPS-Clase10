@@ -27,4 +27,9 @@ public class SingleConversionDataRepository implements ExchangePersistence {
         final var conversionEntityList = this.singleConversionMongoRepository.findAll();
         return conversionEntityList.stream().map(this.singleConversionDataMapper::toEntity).toList();
     }
+
+    @Override
+    public void deleteAll() {
+        this.singleConversionMongoRepository.deleteAll();
+    }
 }

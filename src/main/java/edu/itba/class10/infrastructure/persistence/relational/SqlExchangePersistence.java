@@ -28,4 +28,9 @@ public class SqlExchangePersistence implements ExchangePersistence {
         final var sqlEntityList = this.singleConversionJpaRepository.findAll();
         return sqlEntityList.stream().map(this.singleConversionSqlMapper::toEntity).toList();
     }
+
+    @Override
+    public void deleteAll() {
+        this.singleConversionJpaRepository.deleteAll();
+    }
 }
