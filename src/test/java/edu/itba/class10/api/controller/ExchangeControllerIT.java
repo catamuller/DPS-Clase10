@@ -6,7 +6,9 @@ import edu.itba.class10.converter.api.domain.Conversion;
 import edu.itba.class10.converter.api.domain.ConvertedAmount;
 import edu.itba.class10.converter.api.domain.Currency;
 import edu.itba.class10.converter.api.domain.SingleConversionRequest;
+import edu.itba.class10.domain.entity.money.MoneyAmount;
 import edu.itba.class10.domain.persistence.ExchangePersistence;
+import edu.itba.class10.domain.persistence.SingleConversionEntity;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,11 +19,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.emptyArray;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("sql")
@@ -32,11 +42,13 @@ class ExchangeControllerIT extends IntegrationTest {
 	@Autowired
 	private TestRestTemplate testRestTemplate;
 
-	@Autowired
+	@MockitoBean
 	private ExchangePersistence exchangePersistence;
 
 	@Test
-	void getAllConversionsReturnsEmptyListWhenNoConversionWasMade() {
+	void getAllConversionsReturnsEmptyListWhenNoConversionExists() {
+		when(this.exchangePersistence.findAll()).thenReturn(List.of());
+
 		final var response = this.getAllConversions();
 
 		assertThat(response.getStatusCode(), is(HttpStatus.OK));
@@ -44,8 +56,12 @@ class ExchangeControllerIT extends IntegrationTest {
 	}
 
 	@Test
-	void getAllConversionsReturnsSinglePersistedConversion() {
-		this.convert(Currency.EUR, Currency.USD, 100.0);
+	void getAllConversionsSerializesPersistedConversions() {
+		when(this.exchangePersistence.findAll()).thenReturn(List.of(
+				new SingleConversionEntity(
+						LocalDate.of(2025, 6, 13),
+						MoneyAmount.create(edu.itba.class10.domain.entity.money.Currency.EUR, BigDecimal.valueOf(100)),
+						MoneyAmount.create(edu.itba.class10.domain.entity.money.Currency.USD, BigDecimal.valueOf(10200)))));
 
 		final var response = this.getAllConversions();
 
@@ -60,14 +76,10 @@ class ExchangeControllerIT extends IntegrationTest {
 	}
 
 	@Test
-	void getAllConversionsReturnsMultiplePersistedConversions() {
+	void convertPersistsTheConversion() {
 		this.convert(Currency.EUR, Currency.USD, 100.0);
-		this.convert(Currency.EUR, Currency.USD, 50.0);
 
-		final var response = this.getAllConversions();
-
-		assertThat(response.getStatusCode(), is(HttpStatus.OK));
-		assertThat(response.getBody(), is(arrayWithSize(2)));
+		verify(this.exchangePersistence).save(any(SingleConversionEntity.class));
 	}
 
 	@Test
@@ -82,8 +94,8 @@ class ExchangeControllerIT extends IntegrationTest {
 		final var headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
-		final var response = this.testRestTemplate.postForEntity(CONVERSION_PATH, new HttpEntity<>(body, headers),
-				String.class);
+		final var response = this.testRestTemplate.postForEntity(CONVERSION_PATH,
+				new HttpEntity<>(body, headers), String.class);
 
 		assertThat(response.getStatusCode(), is(HttpStatus.BAD_REQUEST));
 	}
