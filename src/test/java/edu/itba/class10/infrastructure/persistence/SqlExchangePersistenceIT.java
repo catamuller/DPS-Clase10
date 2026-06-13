@@ -60,9 +60,9 @@ public class SqlExchangePersistenceIT extends IntegrationTest {
         Assertions.assertEquals(LocalDate.of(2025, 6, 13), saved.date());
 
         Assertions.assertEquals(Currency.EUR, saved.from().currency());
-        Assertions.assertTrue(BigDecimal.valueOf(100).compareTo(saved.from().amount()) == 0);
+        Assertions.assertEquals(0, BigDecimal.valueOf(100).compareTo(saved.from().amount()));
 
         Assertions.assertEquals(Currency.USD, saved.to().currency());
-        Assertions.assertTrue(BigDecimal.valueOf(10200).compareTo(saved.to().amount()) == 0);
+        Assertions.assertEquals(0, BigDecimal.valueOf(10200).compareTo(saved.to().amount()));
     }
 }
